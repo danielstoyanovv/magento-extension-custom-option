@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Dani_CustomOption>
+            <version>0.1.0</version>
+        </Dani_CustomOption>
+    </modules>
+    <global>
+
+        <models>
+            <catalogrule>
+                <rewrite>
+                    <rule>Dani_CustomOption_Model_Rule</rule>
+                </rewrite>
+            </catalogrule>
+            <catalog>
+                <rewrite>
+                    <product_type_price>Dani_CustomOption_Model_Product_Type_Price</product_type_price>
+                </rewrite>
+            </catalog>
+        </models>
+        
+        
+        <blocks>
+            <customoption>
+                <class>Dani_CustomOption_Block</class>
+            </customoption>
+            <catalog>
+                <rewrite>
+                    <product_view_options>Dani_CustomOption_Block_Product_View_Options</product_view_options>
+                    <product_view_options_type_select>Dani_CustomOption_Block_Product_View_Options_Type_Select</product_view_options_type_select>
+                </rewrite>
+            </catalog>
+        </blocks>
+        
+        <helpers>
+            <customoption>
+                <class>Dani_CustomOption_Helper</class>
+            </customoption>
+        </helpers>
+
+    </global>
+</config>
