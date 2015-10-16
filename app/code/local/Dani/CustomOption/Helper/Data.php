@@ -40,7 +40,7 @@ class Dani_CustomOption_Helper_Data extends Mage_Core_Helper_Abstract
         return false;
     }
 
-    private function productHasDiscount($product)
+    public function productHasDiscount($product)
     {
         return Mage::getResourceModel('catalogrule/rule')->getRulePrice( 
                         Mage::app()->getLocale()->storeTimeStamp($product->getStoreId()), 
@@ -48,5 +48,87 @@ class Dani_CustomOption_Helper_Data extends Mage_Core_Helper_Abstract
                         Mage::getSingleton('customer/session')->getCustomerGroupId(), 
                         $product->getId());      
     }
-    
+
+    public function getRetailProductPrice($product)
+    {
+        $price             = $product->getPrice();
+        $defaultPrices     = $this->getCustomOptionsPrices($product);
+        $selectedIds       = $this->getSelectedCustomOptionsIds($product);
+        $totalDefaultPrice = 0; 
+
+        if($product->getSpecialPrice != '')
+        {
+            $price = $product->getSpecialPrice();
+        }
+
+        $totalDefaultPrice += $price;
+
+        foreach ($selectedIds as $optionId => $value) {
+            if(is_array($value))
+            {
+                foreach ($value as $k => $v) {
+                    if(isset($defaultPrices[$optionId][$v]))
+                    {
+                        $totalDefaultPrice += $defaultPrices[$optionId][$v];
+                    }
+                }
+            }
+            else
+            {
+                if(isset($defaultPrices[$optionId][$value]))
+                {
+                    $totalDefaultPrice += $defaultPrices[$optionId][$value];
+                }
+            }
+
+        }
+
+        return $totalDefaultPrice;
+    }
+
+    public function getRulePriceData($product)
+    {
+        return Mage::getResourceModel('catalogrule/rule')->getRulesFromProduct(
+            Mage::app()->getLocale()->storeTimeStamp($product->getStoreId()), 
+            Mage::app()->getStore($product->getStoreId())->getWebsiteId(), 
+             Mage::getSingleton('customer/session')->getCustomerGroupId(),
+            $product->getId());
+    }
+
+    public function calculateDiscount($product)
+    {
+        $dicountPrice = 0;
+        $totalDefaultPrice = $this->getRetailProductPrice($product);
+
+
+        return $totalDefaultPrice - $product->getFinalPrice(); 
+
+    }
+
+    public function getSelectedCustomOptionsIds($product)
+    {
+        $optionsIds          = array();
+        $selectedOptionsData = $product->getTypeInstance(true)->getOrderOptions($product);
+        if(isset($selectedOptionsData['info_buyRequest']) && isset($selectedOptionsData['info_buyRequest']['options']))
+        {
+            $optionsIds = $selectedOptionsData['info_buyRequest']['options'];   
+        }
+
+        return $optionsIds;
+    }
+
+    public function getCustomOptionsPrices($product)
+    {
+        $pricesData      = array();
+        $selectedOptions = $this->getSelectedCustomOptionsIds($product);
+        foreach($selectedOptions as $optionId => $v)
+        {
+            foreach(Mage::getModel('catalog/product_option_value')->getValuesCollection($product->getOptionById($optionId)) as $option)
+            {
+                $pricesData[$option->getOptionId()][$option->getOptionTypeId()] = $option->getPrice();
+            }
+        }
+
+        return $pricesData;
+    }
 }
