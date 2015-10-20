@@ -25,11 +25,13 @@ class Dani_CustomOption_Block_Product_View_Options_Type_Select extends Mage_Cata
             return '';
         }
 
-        if(Mage::helper('customoption')->priceHasDiscount($this->getProduct(), $value['pricing_value']))
+        /*
+        if(is_numeric(Mage::helper('customoption')->priceHasDiscount($this->getProduct(), $value['pricing_value'])))
         {
             $value['pricing_value'] = Mage::helper('customoption')->priceHasDiscount($this->getProduct(), $value['pricing_value']);
         }
-        
+        */
+
         $taxHelper = Mage::helper('tax');
         $store = $this->getProduct()->getStore();
 
