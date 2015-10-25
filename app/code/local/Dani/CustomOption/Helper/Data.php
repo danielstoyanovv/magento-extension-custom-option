@@ -131,4 +131,37 @@ class Dani_CustomOption_Helper_Data extends Mage_Core_Helper_Abstract
 
         return $pricesData;
     }
+
+    public function calculateSubtotalDefault()
+    {   
+        $defaultSubtotalPrice = 0;
+        $cartData = Mage::getModel('checkout/cart')->getQuote();
+        foreach ($cartData->getAllVisibleItems() as $item) {
+            $defaultSubtotalPrice += $this->getRetailProductPrice($item->getProduct());
+        }
+
+        return $defaultSubtotalPrice;
+    }
+
+    public function checkIfOptionHasMultiSelect($optionId, $product)
+    {
+        $selectedOptions        = $this->getSelectedCustomOptionsIds($product);
+        $defaultPrices          = $this->getCustomOptionsPrices($product);
+        $selectedOptionPrices   = array();
+
+        if(is_array($defaultPrices) && is_array($selectedOptions) && isset($selectedOptions[$optionId]) && is_array($selectedOptions[$optionId]))
+        {
+            foreach ($selectedOptions[$optionId] as $key => $value) {
+                if(isset($defaultPrices[$optionId][$value]))
+                {
+                    $selectedOptionPrices[] = $defaultPrices[$optionId][$value]; 
+                }
+            }
+
+            return $selectedOptionPrices;
+        }
+        
+        return false;
+        
+    }
 }

@@ -333,32 +333,34 @@ class Dani_CustomOption_Model_Product_Type_Price extends Mage_Catalog_Model_Prod
     {
         
         if ($optionIds = $product->getCustomOption('option_ids')) {
-            $basePrice          = $finalPrice;
-            $productId          = $product->getId();
-            $storeId            = $product->getStoreId();
-            $websiteId          = Mage::app()->getStore($storeId)->getWebsiteId();
-            if ($product->hasCustomerGroupId()) {
-                $customerGroupId = $product->getCustomerGroupId();
-            } else {
-                $customerGroupId = Mage::getSingleton('customer/session')->getCustomerGroupId();
-            }
-            $dateTs             = Mage::app()->getLocale()->date()->getTimestamp();
+            
+            $basePrice = $finalPrice;
+           
             foreach (explode(',', $optionIds->getValue()) as $optionId) {
                 if ($option = $product->getOptionById($optionId)) {
-                    $confItemOption = $product->getCustomOption('option_'.$option->getId());
-
-                    $group = $option->groupFactory($option->getType())
-                        ->setOption($option)
-                        ->setConfigurationItemOption($confItemOption);
-
-                    $optionPrice         = $group->getOptionPrice($confItemOption->getValue(), $basePrice);
                     
-                    $rulePriceDiscounted = Mage::helper('customoption')->getProductCatalogPriceRule($product, $group->getOptionPrice($confItemOption->getValue(), $basePrice));
-                    $cacheKey            = date('Y-m-d', $dateTs) . "|$websiteId|$customerGroupId|$productId|$optionPrice";    
+                    $confItemOption       = $product->getCustomOption('option_'.$option->getId());
+                    $group                = $option->groupFactory($option->getType())
+                                             ->setOption($option)
+                                             ->setConfigurationItemOption($confItemOption);
+                    $optionPrice          = $group->getOptionPrice($confItemOption->getValue(), $basePrice);
+                    $optionHasMultiSelect =  Mage::helper('customoption')->checkIfOptionHasMultiSelect($optionId, $product);
 
-                    if(array_key_exists($cacheKey, $rulePriceDiscounted))
+                    if(Mage::helper('customoption')->priceHasDiscount($product, $optionPrice))
                     {
-                        $finalPrice += $rulePriceDiscounted[$cacheKey];
+                        if(is_array($optionHasMultiSelect))
+                        {
+                            foreach ($optionHasMultiSelect as $key => $value) {
+                                if(Mage::helper('customoption')->priceHasDiscount($product, $value))
+                                {
+                                    $finalPrice += Mage::helper('customoption')->priceHasDiscount($product, $value);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            $finalPrice += Mage::helper('customoption')->priceHasDiscount($product, $optionPrice);
+                        }
                     }
                     else
                     {
