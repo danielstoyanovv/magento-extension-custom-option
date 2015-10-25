@@ -346,12 +346,12 @@ class Dani_CustomOption_Model_Product_Type_Price extends Mage_Catalog_Model_Prod
                     $optionPrice          = $group->getOptionPrice($confItemOption->getValue(), $basePrice);
                     $optionHasMultiSelect =  Mage::helper('customoption')->checkIfOptionHasMultiSelect($optionId, $product);
 
-                    if(Mage::helper('customoption')->priceHasDiscount($product, $optionPrice))
+                    if(is_numeric(Mage::helper('customoption')->priceHasDiscount($product, $optionPrice)))
                     {
                         if(is_array($optionHasMultiSelect))
                         {
                             foreach ($optionHasMultiSelect as $key => $value) {
-                                if(Mage::helper('customoption')->priceHasDiscount($product, $value))
+                                if(is_numeric(Mage::helper('customoption')->priceHasDiscount($product, $value)))
                                 {
                                     $finalPrice += Mage::helper('customoption')->priceHasDiscount($product, $value);
                                 }
