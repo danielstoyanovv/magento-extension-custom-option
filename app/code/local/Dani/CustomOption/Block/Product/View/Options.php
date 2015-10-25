@@ -47,12 +47,12 @@ class Dani_CustomOption_Block_Product_View_Options extends Mage_Catalog_Block_Pr
         $optionPrice        = $option->getPrice(true);
         $optionOldPrice     = $option->getPrice(false);
         
-        if($this->helper('customoption')->priceHasDiscount($this->getProduct(), $optionPrice))
+        if(is_numeric($this->helper('customoption')->priceHasDiscount($this->getProduct(), $optionPrice)))
         {
             $optionPrice = $this->helper('customoption')->priceHasDiscount($this->getProduct(), $optionPrice);
         }
         
-        if($this->helper('customoption')->priceHasDiscount($this->getProduct(), $optionOldPrice))
+        if(is_numeric($this->helper('customoption')->priceHasDiscount($this->getProduct(), $optionOldPrice)))
         {
             $optionOldPrice = $this->helper('customoption')->priceHasDiscount($this->getProduct(), $optionOldPrice);
         }
@@ -68,12 +68,14 @@ class Dani_CustomOption_Block_Product_View_Options extends Mage_Catalog_Block_Pr
         $data['excludeTax'] = $price = Mage::helper('tax')->getPrice($option->getProduct(), $data['price'], false);
         $data['includeTax'] = $price = Mage::helper('tax')->getPrice($option->getProduct(), $data['price'], true);
         */
-        $data['price']      = Mage::helper('core')->currency($optionPrice, false, false);
-        $data['oldPrice']   = Mage::helper('core')->currency($optionOldPrice, false, false);
-        $data['priceValue'] = $optionOldPrice;
-        $data['type']       = $option->getPriceType();
-        $data['excludeTax'] = $price = Mage::helper('tax')->getPrice($option->getProduct(), $data['price'], false);
-        $data['includeTax'] = $price = Mage::helper('tax')->getPrice($option->getProduct(), $data['price'], true);
+
+        $data['priceDefault'] = $option->getPrice(true);
+        $data['price']        = Mage::helper('core')->currency($optionPrice, false, false);
+        $data['oldPrice']     = Mage::helper('core')->currency($optionOldPrice, false, false);
+        $data['priceValue']   = $optionOldPrice;
+        $data['type']         = $option->getPriceType();
+        $data['excludeTax']   = $price = Mage::helper('tax')->getPrice($option->getProduct(), $data['price'], false);
+        $data['includeTax']   = $price = Mage::helper('tax')->getPrice($option->getProduct(), $data['price'], true);
         
 
         return $data;
