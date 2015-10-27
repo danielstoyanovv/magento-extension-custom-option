@@ -18,6 +18,11 @@
                     <product_type_price>Dani_CustomOption_Model_Product_Type_Price</product_type_price>
                 </rewrite>
             </catalog>
+            <catalog>
+                <rewrite>
+                    <product_option_value>Dani_CustomOption_Model_Product_Option_Value</product_option_value>
+                </rewrite>
+            </catalog>
         </models>
         
         

@@ -121,13 +121,12 @@ class Dani_CustomOption_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $pricesData             = array();
         $selectedOptions        = $this->getSelectedCustomOptionsIds($product);
-        $productDiscountedPrice = $this->priceHasDiscount($product, $product->getPrice());
         foreach($selectedOptions as $optionId => $v)
         {
             foreach(Mage::getModel('catalog/product_option_value')->getValuesCollection($product->getOptionById($optionId)) as $option)
             {
                 if($option->getData('price_type') == 'percent')
-                    $pricesData[$option->getOptionId()][$option->getOptionTypeId()] = $productDiscountedPrice * $option->getPrice() / 100;
+                    $pricesData[$option->getOptionId()][$option->getOptionTypeId()] = $product->getPrice() * $option->getPrice() / 100;
                 else
                     $pricesData[$option->getOptionId()][$option->getOptionTypeId()] = $option->getPrice();
             }
