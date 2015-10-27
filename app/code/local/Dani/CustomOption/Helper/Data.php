@@ -55,7 +55,7 @@ class Dani_CustomOption_Helper_Data extends Mage_Core_Helper_Abstract
         $defaultPrices     = $this->getCustomOptionsPrices($product);
         $selectedIds       = $this->getSelectedCustomOptionsIds($product);
         $totalDefaultPrice = 0; 
-
+        
         if($product->getSpecialPrice != '')
         {
             $price = $product->getSpecialPrice();
@@ -119,13 +119,17 @@ class Dani_CustomOption_Helper_Data extends Mage_Core_Helper_Abstract
 
     public function getCustomOptionsPrices($product)
     {
-        $pricesData      = array();
-        $selectedOptions = $this->getSelectedCustomOptionsIds($product);
+        $pricesData             = array();
+        $selectedOptions        = $this->getSelectedCustomOptionsIds($product);
+        $productDiscountedPrice = $this->priceHasDiscount($product, $product->getPrice());
         foreach($selectedOptions as $optionId => $v)
         {
             foreach(Mage::getModel('catalog/product_option_value')->getValuesCollection($product->getOptionById($optionId)) as $option)
             {
-                $pricesData[$option->getOptionId()][$option->getOptionTypeId()] = $option->getPrice();
+                if($option->getData('price_type') == 'percent')
+                    $pricesData[$option->getOptionId()][$option->getOptionTypeId()] = $productDiscountedPrice * $option->getPrice() / 100;
+                else
+                    $pricesData[$option->getOptionId()][$option->getOptionTypeId()] = $option->getPrice();
             }
         }
 
@@ -137,7 +141,7 @@ class Dani_CustomOption_Helper_Data extends Mage_Core_Helper_Abstract
         $defaultSubtotalPrice = 0;
         $cartData = Mage::getModel('checkout/cart')->getQuote();
         foreach ($cartData->getAllVisibleItems() as $item) {
-            $defaultSubtotalPrice += $this->getRetailProductPrice($item->getProduct());
+            $defaultSubtotalPrice += $item->getQty() * $this->getRetailProductPrice($item->getProduct());
         }
 
         return $defaultSubtotalPrice;
