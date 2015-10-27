@@ -168,4 +168,11 @@ class Dani_CustomOption_Helper_Data extends Mage_Core_Helper_Abstract
         return false;
         
     }
+
+    public function calculateSubtotalDiscount()
+    {
+        $baseSubTotalWithDiscount =  Mage::getModel('checkout/cart')->getQuote()->getData('subtotal_with_discount');
+        
+        return $this->calculateSubtotalDefault() - $baseSubTotalWithDiscount;
+    }
 }
