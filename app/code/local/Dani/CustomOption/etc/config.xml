@@ -18,11 +18,6 @@
                     <product_type_price>Dani_CustomOption_Model_Product_Type_Price</product_type_price>
                 </rewrite>
             </catalog>
-            <catalog>
-                <rewrite>
-                    <product_option_value>Dani_CustomOption_Model_Product_Option_Value</product_option_value>
-                </rewrite>
-            </catalog>
         </models>
         
         
@@ -30,11 +25,6 @@
             <customoption>
                 <class>Dani_CustomOption_Block</class>
             </customoption>
-            <tax>
-                <rewrite>
-                    <checkout_discount>Dani_Customoption_Block_Checkout_Discount</checkout_discount>
-                </rewrite>
-            </tax>
             <catalog>
                 <rewrite>
                     <product_view_options>Dani_CustomOption_Block_Product_View_Options</product_view_options>
